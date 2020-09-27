@@ -7,26 +7,24 @@ using System.Text;
 
 namespace GamesLibrary.Model
 {
-    public class Developer
+    public class Publisher
     {
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
-        public string Role { get; set; }
-        public List<GameDeveloper> GameDevelopers { get; set; }
+        public List<GamePublisher> GamePublishers { get; set; }
 
         #region Spel Meny
-        public static void UtvecklareMeny()
+        public static void UtgivareMeny()
         {
 
             bool menuDeveloper = true;
             while (menuDeveloper)
             {
-                Console.WriteLine("Lägg till utvecklare (s)");
-                Console.WriteLine("Updatera utvecklare (u)");
-                Console.WriteLine("Tabort utvecklare (d)");
-                Console.WriteLine("Lista utvecklare (l)");
+                Console.WriteLine("Lägg till Utgivare (s)");
+                Console.WriteLine("Updatera Utgivare (u)");
+                Console.WriteLine("Tabort Utgivare (d)");
+                Console.WriteLine("Lista Utgivare (l)");
                 Console.WriteLine("Gå tillbaka (e)");
 
                 try
@@ -36,29 +34,25 @@ namespace GamesLibrary.Model
                     switch (menu)
                     {
                         case "s":
-                            Console.WriteLine("Var god skriv in namnet på en spel utvecklare. ");
-                            string developerName = Console.ReadLine();
-                            Console.WriteLine("Var god skriv in en utvecklarens roll. ");
-                            string developerRole = Console.ReadLine();
-                            CreateDeveloper(developerName, developerRole);
+                            Console.WriteLine("Var god skriv in namnet på en spel utgivare. ");
+                            string gamePublisherName = Console.ReadLine();
+                            CreatePublisher(gamePublisherName);
                             ListDevelopers();
                             break;
 
                         case "u":
-                            Console.WriteLine("Var god skriv in utvecklarens namn som du vill uppdatera. ");
+                            Console.WriteLine("Var god skriv in namnet på en spel utgivare som du vill uppdatera. ");
                             string updateDeveloper = Console.ReadLine();
                             Console.WriteLine("Skriv in namn. ");
                             string newName = Console.ReadLine();
-                            Console.WriteLine("Skriv in roll. ");
-                            string newRole = Console.ReadLine();
-                            UpdateDeveloper(updateDeveloper, newName, newRole);
+                            UpdateGame(updateDeveloper, newName);
                             ListDevelopers();
                             break;
 
                         case "d":
-                            Console.WriteLine("Var god skriv in utvecklarens namn som du vill Radera. ");
+                            Console.WriteLine("Var god skriv in utgivares namn som du vill Radera. ");
                             string deleteDeveloper = Console.ReadLine();
-                            DeleteDeveloper(deleteDeveloper);
+                            DeleteGame(deleteDeveloper);
                             ListDevelopers();
                             break;
 
@@ -107,47 +101,44 @@ namespace GamesLibrary.Model
         }
         #endregion
         #region Create
-        static void CreateDeveloper(string developerName, string developerRole)
+        static void CreatePublisher(string gamePublisherName)
         {
             using (GameContext db = new GameContext())
             {
-                Developer newDeveloper = new Developer();
-                newDeveloper.Name = developerName;
-                newDeveloper.Role = developerRole;
-                db.Developers.Add(newDeveloper);
+                Developer newPublisher = new Developer();
+                newPublisher.Name = gamePublisherName;
+                db.Publishers.Add(newPublisher);
                 db.SaveChanges();
             }
         }
         #endregion
         #region Update
-        static void UpdateDeveloper(string updateDeveloper, string newName, string newRole)
+        static void UpdateGame(string updateDeveloper, string newName)
         {
             using (GameContext db = new GameContext())
             {
-                var selectedDeveloper = db.Developers.Where(p => p.Name == updateDeveloper).FirstOrDefault();
-                if (selectedDeveloper != null)
+                var selectedPublisher = db.Developers.Where(p => p.Name == updateDeveloper).FirstOrDefault();
+                if (selectedPublisher != null)
                 {
-                    selectedDeveloper.Name = newName;
-                    selectedDeveloper.Role = newRole;
+                    selectedPublisher.Name = newName;
                     db.SaveChanges();
                 }
             }
         }
         #endregion
         #region Delete
-        static void DeleteDeveloper(string deleteDeveloper)
+        static void DeleteGame(string deleteDeveloper)
         {
             using (GameContext db = new GameContext())
             {
-                var selectedDeveloper = db.Developers.Where(p => p.Name == deleteDeveloper).FirstOrDefault();
-                if (selectedDeveloper != null)
+                var selectedGame = db.Developers.Where(p => p.Name == deleteDeveloper).FirstOrDefault();
+                if (selectedGame != null)
                 {
-                    db.Developers.Remove(selectedDeveloper);
+                    db.Developers.Remove(selectedGame);
                     db.SaveChanges();
                 }
             }
         }
         #endregion
-
     }
 }

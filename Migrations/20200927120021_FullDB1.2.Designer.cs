@@ -3,14 +3,16 @@ using GamesLibrary.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GamesLibrary.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20200927120021_FullDB1.2")]
+    partial class FullDB12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,21 +83,6 @@ namespace GamesLibrary.Migrations
                     b.ToTable("GameDevelopers");
                 });
 
-            modelBuilder.Entity("GamesLibrary.Model.GamePublisher", b =>
-                {
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PublisherId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GameId", "PublisherId");
-
-                    b.HasIndex("PublisherId");
-
-                    b.ToTable("GamePublishers");
-                });
-
             modelBuilder.Entity("GamesLibrary.Model.Publisher", b =>
                 {
                     b.Property<int>("Id")
@@ -125,7 +112,7 @@ namespace GamesLibrary.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Studios");
+                    b.ToTable("Studio");
                 });
 
             modelBuilder.Entity("GamesLibrary.Model.GameDeveloper", b =>
@@ -145,21 +132,6 @@ namespace GamesLibrary.Migrations
                     b.HasOne("GamesLibrary.Model.Studio", "studio")
                         .WithMany("GameDevelopers")
                         .HasForeignKey("StudioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("GamesLibrary.Model.GamePublisher", b =>
-                {
-                    b.HasOne("GamesLibrary.Model.Game", "Game")
-                        .WithMany("GamePublishers")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GamesLibrary.Model.Publisher", "publisher")
-                        .WithMany("GamePublishers")
-                        .HasForeignKey("PublisherId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
