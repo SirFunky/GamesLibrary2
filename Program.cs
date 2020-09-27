@@ -33,11 +33,11 @@ namespace GamesLibrary
                             break;
 
                         case "d":
-                            Console.WriteLine("Inte impelementerad än");
+                            Studio.StudioMeny();
                             break;
 
                         case "g":
-                            Console.WriteLine("Inte impelementerad än");
+                            Publisher.UtgivareMeny();
                             break;
 
                         case "l":

@@ -12,7 +12,7 @@ namespace GamesLibrary.Model
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public List<GamePublisher> GamePublishers { get; set; }
+        public ICollection<GamePublisher> GamePublishers { get; set; }
 
         #region Spel Meny
         public static void UtgivareMeny()
@@ -42,10 +42,10 @@ namespace GamesLibrary.Model
 
                         case "u":
                             Console.WriteLine("Var god skriv in namnet på en spel utgivare som du vill uppdatera. ");
-                            string updateDeveloper = Console.ReadLine();
+                            string updatePublisher = Console.ReadLine();
                             Console.WriteLine("Skriv in namn. ");
                             string newName = Console.ReadLine();
-                            UpdateGame(updateDeveloper, newName);
+                            UpdatePublisher(updatePublisher, newName);
                             ListDevelopers();
                             break;
 
@@ -80,22 +80,12 @@ namespace GamesLibrary.Model
         {
             using (GameContext db = new GameContext())
             {
-                List<Developer> developerList = db.Developers
-                    .Include(g => g.GameDevelopers)
-                    .ThenInclude(d => d.Developer)
-                    .Include(st => st.GameDevelopers)
-                    .ThenInclude(s => s.studio)
+                List<Publisher> publisherList = db.Publishers
                     .ToList();
 
-                foreach (var Developer in developerList)
+                foreach (var Publisher in publisherList)
                 {
-                    string studio = "";
-                    foreach (var gameStudio in Developer.GameDevelopers)
-                    {
-                        studio += gameStudio.studio.Name + " ";
-                    }
-
-                    Console.WriteLine(Developer.Name + " " + Developer.Role + " " + studio + " ");
+                    Console.WriteLine(Publisher.Name);
                 }
             }
         }
@@ -105,7 +95,7 @@ namespace GamesLibrary.Model
         {
             using (GameContext db = new GameContext())
             {
-                Developer newPublisher = new Developer();
+                Publisher newPublisher = new Publisher();
                 newPublisher.Name = gamePublisherName;
                 db.Publishers.Add(newPublisher);
                 db.SaveChanges();
@@ -113,11 +103,11 @@ namespace GamesLibrary.Model
         }
         #endregion
         #region Update
-        static void UpdateGame(string updateDeveloper, string newName)
+        static void UpdatePublisher(string updatePublisher, string newName)
         {
             using (GameContext db = new GameContext())
             {
-                var selectedPublisher = db.Developers.Where(p => p.Name == updateDeveloper).FirstOrDefault();
+                var selectedPublisher = db.Publishers.Where(p => p.Name == updatePublisher).FirstOrDefault();
                 if (selectedPublisher != null)
                 {
                     selectedPublisher.Name = newName;
@@ -131,10 +121,10 @@ namespace GamesLibrary.Model
         {
             using (GameContext db = new GameContext())
             {
-                var selectedGame = db.Developers.Where(p => p.Name == deleteDeveloper).FirstOrDefault();
-                if (selectedGame != null)
+                var selectedPublisher = db.Publishers.Where(p => p.Name == deleteDeveloper).FirstOrDefault();
+                if (selectedPublisher != null)
                 {
-                    db.Developers.Remove(selectedGame);
+                    db.Publishers.Remove(selectedPublisher);
                     db.SaveChanges();
                 }
             }

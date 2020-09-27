@@ -13,5 +13,6 @@ namespace GamesLibrary.Model
         public Developer Developer { get; set; }
         public Studio studio { get; set; }
 
+
     }
 }

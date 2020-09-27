@@ -43,11 +43,6 @@ namespace GamesLibrary.Model
             // Lägg till PK för GamePublisher
             modelBuilder.Entity<GamePublisher>()
                 .HasKey(k => new {k.GameId, k.PublisherId });
-            // Lägg till Relation mellan Game och GamePublisher
-            modelBuilder.Entity<GamePublisher>()
-                .HasOne(b => b.Game)
-                .WithMany(bc => bc.GamePublishers)
-                .HasForeignKey(d => d.GameId);
             // Lägg till Relation mellan Publisher och GameDeveloper
             modelBuilder.Entity<GamePublisher>()
                 .HasOne(b => b.publisher)
