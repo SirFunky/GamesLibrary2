@@ -12,7 +12,6 @@ namespace GamesLibrary.Model
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Studio> Studios { get; set; }
         public DbSet<GameDeveloper> GameDevelopers { get; set; }
-        public DbSet<GamePublisher> GamePublishers { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=.\;Database=GamesDB;Trusted_Connection=True;");
@@ -40,14 +39,10 @@ namespace GamesLibrary.Model
                 .HasForeignKey(d => d.StudioId);
             #endregion
             #region Game publisher key relations
-            // Lägg till PK för GamePublisher
-            modelBuilder.Entity<GamePublisher>()
-                .HasKey(k => new {k.GameId, k.PublisherId });
-            // Lägg till Relation mellan Publisher och GameDeveloper
-            modelBuilder.Entity<GamePublisher>()
-                .HasOne(b => b.publisher)
-                .WithMany(bc => bc.GamePublishers)
-                .HasForeignKey(d => d.PublisherId);
+
+            modelBuilder.Entity<Game>()
+                .HasOne(b => b.Publisher)
+                .WithMany(bc => bc.Games);
 
             #endregion
         }

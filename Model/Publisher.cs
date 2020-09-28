@@ -12,7 +12,7 @@ namespace GamesLibrary.Model
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public ICollection<GamePublisher> GamePublishers { get; set; }
+        public ICollection<Game> Games { get; set; }
 
         #region Spel Meny
         public static void UtgivareMeny()

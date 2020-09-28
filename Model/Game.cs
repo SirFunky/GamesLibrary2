@@ -17,8 +17,8 @@ namespace GamesLibrary.Model
         public string Gener { get; set; }
         [Required]
         public int  NumberOfPlayers { get; set; }
+        public Publisher Publisher { get; set; }
         public List<GameDeveloper> GameDevelopers { get; set; }
-        public List<GamePublisher> GamePublishers { get; set; }
 
         #region Spel Meny
         public static void Spelmeny()
@@ -52,7 +52,9 @@ namespace GamesLibrary.Model
                             string developerRole = Console.ReadLine();
                             Console.WriteLine("Var god skriv in vilken spel studio som skapat spelet. ");
                             string studioName = Console.ReadLine();
-                            CreateGame(gameName, gameGenre, gameDeveloper, developerRole, studioName, numberOfPlayers);
+                            Console.WriteLine("Var god skriv in vilken utgivare som gett ut spelet. ");
+                            string publisherName = Console.ReadLine();
+                            CreateGame(gameName, gameGenre, gameDeveloper, developerRole, studioName, numberOfPlayers, publisherName);
                             ListGames();
                             break;
 
@@ -103,8 +105,7 @@ namespace GamesLibrary.Model
                     .ThenInclude(d => d.Developer)
                     .Include(st => st.GameDevelopers)
                     .ThenInclude(s => s.studio)
-                    .Include(gp => gp.GamePublishers)
-                    .ThenInclude(p => p.publisher)
+                    .Include (p => p.Publisher)
                     .ToList();
 
                 foreach (var game in gameList)
@@ -115,34 +116,32 @@ namespace GamesLibrary.Model
                         developers += gameDeveloper.Developer.Name + " ";
                     }
                     string studio = "";
-                    foreach (var gamePublisher in game.GameDevelopers)
+                    foreach (var gamedeveloper in game.GameDevelopers)
                     {
-                        studio += gamePublisher.studio.Name + " ";
-                    }
-                    string publisher = "";
-                    foreach (var gamePublisher in game.GamePublishers)
-                    {
-                        publisher += gamePublisher.publisher.Name + " ";
+                        studio += gamedeveloper.studio.Name + " ";
                     }
 
-                    Console.WriteLine(game.Name + " " + game.Gener + " " + game.NumberOfPlayers + " " + developers + " " + studio + " " + publisher);
+                    Console.WriteLine(game.Name + " " + game.Gener + " " + game.NumberOfPlayers + " " + developers + " " + studio + " " + game.Publisher.Name);
                 }
             }
         }
         #endregion
         #region Create
-        static void CreateGame(string name, string gener, string developerName, string developerRole, string studioName, int numberOfPlayers)
+        static void CreateGame(string name, string gener, string developerName, string developerRole, string studioName, int numberOfPlayers, string publisherName)
         {
             using (GameContext db = new GameContext())
             {
                 Developer developer = db.Developers.Where(n => n.Name == developerName).FirstOrDefault();
                 Studio studio = db.Studios.Where(s => s.Name == studioName).FirstOrDefault();
-                if (developer != null && studio != null)
+                Publisher publisher = db.Publishers.Where(p => p.Name == publisherName).FirstOrDefault();
+               
+                if (developer != null && studio != null && publisher != null)
                 {
                     Game newGame = new Game();
                     newGame.Gener = gener;
                     newGame.Name = name;
                     newGame.NumberOfPlayers = numberOfPlayers;
+                    newGame.Publisher.Id = publisher.Id;
                     db.Games.Add(newGame);
                     db.SaveChanges();
 
@@ -153,12 +152,13 @@ namespace GamesLibrary.Model
                     db.GameDevelopers.Add(gameDeveloper);
                     db.SaveChanges();
                 }
-                else if ( studio != null)
+                else if ( studio != null && publisher != null)
                 {
                     Game newGame = new Game();
                     newGame.Gener = gener;
                     newGame.Name = name;
                     newGame.NumberOfPlayers = numberOfPlayers;
+                    newGame.Publisher.Id = publisher.Id;
                     db.Games.Add(newGame);
                     db.SaveChanges();
 
@@ -175,12 +175,13 @@ namespace GamesLibrary.Model
                     db.GameDevelopers.Add(gameDeveloper);
                     db.SaveChanges();
                 }
-                else if ( developer != null)
+                else if ( developer != null && publisher != null)
                 {
                     Game newGame = new Game();
                     newGame.Gener = gener;
                     newGame.Name = name;
                     newGame.NumberOfPlayers = numberOfPlayers;
+                    newGame.Publisher.Id = publisher.Id;
                     db.Games.Add(newGame);
                     db.SaveChanges();
 
@@ -196,14 +197,32 @@ namespace GamesLibrary.Model
                     db.GameDevelopers.Add(gameDeveloper);
                     db.SaveChanges();
                 }
-                else
+                else if (developer != null && studio != null)
                 {
                     Game newGame = new Game();
                     newGame.Gener = gener;
                     newGame.Name = name;
                     newGame.NumberOfPlayers = numberOfPlayers;
+                    newGame.Publisher.Id = publisher.Id;
                     db.Games.Add(newGame);
                     db.SaveChanges();
+
+                    Publisher newPublisher = new Publisher();
+                    newPublisher.Name = publisherName;
+                    db.Publishers.Add(newPublisher);
+                    db.SaveChanges();
+
+                    GameDeveloper gameDeveloper = new GameDeveloper();
+                    gameDeveloper.StudioId = studio.Id;
+                    gameDeveloper.DeveloperId = developer.Id;
+                    gameDeveloper.GameId = newGame.Id;
+                    db.GameDevelopers.Add(gameDeveloper);
+                    db.SaveChanges();
+                }
+
+                else
+                {
+
 
                     Studio newStudio = new Studio();
                     newStudio.Name = studioName;
@@ -214,6 +233,19 @@ namespace GamesLibrary.Model
                     newDeveloper.Name = developerName;
                     newDeveloper.Role = developerRole;
                     db.Developers.Add(newDeveloper);
+                    db.SaveChanges();
+
+                    Publisher newPublisher = new Publisher();
+                    newPublisher.Name = publisherName;
+                    db.Publishers.Add(newPublisher);
+                    db.SaveChanges();
+
+                    Game newGame = new Game();
+                    newGame.Gener = gener;
+                    newGame.Name = name;
+                    newGame.NumberOfPlayers = numberOfPlayers;
+                    newGame.Publisher.Id = newPublisher.Id;
+                    db.Games.Add(newGame);
                     db.SaveChanges();
 
                     GameDeveloper gameDeveloper = new GameDeveloper();
